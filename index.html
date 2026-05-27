@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>מעקב אימונים – דולב</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <svg class="header-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M3 9.5h3.5V14.5H3z"/><path d="M17.5 9.5H21V14.5h-3.5z"/><path d="M3 11.5h1.5"/><path d="M19.5 11.5H21"/>
+          <rect x="6.5" y="9" width="11" height="6" rx="1"/>
+        </svg>
+        <span class="header-title">מעקב אימונים</span>
+      </div>
+      <time class="header-date" id="header-date" aria-label="תאריך היום"></time>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main" id="main">
+
+    <!-- Tab Switcher -->
+    <nav class="tabs" role="tablist" aria-label="בחירת אימון">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="workout-panel" data-workout="workout1" id="tab-workout1">
+        <span class="tab-number">1</span>
+        <div class="tab-info">
+          <span class="tab-name">אימון 1</span>
+          <span class="tab-sub">PUSH · רגליים · בטן</span>
+        </div>
+      </button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="workout-panel" data-workout="workout2" id="tab-workout2">
+        <span class="tab-number">2</span>
+        <div class="tab-info">
+          <span class="tab-name">אימון 2</span>
+          <span class="tab-sub">PULL · ישבן · בטן</span>
+        </div>
+      </button>
+    </nav>
+
+    <!-- Workout Panel -->
+    <div class="workout-panel" id="workout-panel" role="tabpanel">
+
+      <!-- Warmup Card -->
+      <div class="warmup-card">
+        <div class="warmup-header">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2c0 6-8 8-8 14a8 8 0 0 0 16 0c0-6-8-8-8-14z"/><path d="M12 12c0 3-3 4-3 7a3 3 0 0 0 6 0c0-3-3-4-3-7z"/>
+          </svg>
+          <span>חימום</span>
+        </div>
+        <p class="warmup-text" id="warmup-text"></p>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="progress-section">
+        <div class="progress-header">
+          <span class="progress-label">התקדמות אימון</span>
+          <span class="progress-fraction" id="progress-fraction">0 / 0</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-container">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-pct" id="progress-pct">0%</div>
+      </div>
+
+      <!-- Reset Button -->
+      <button class="reset-workout-btn" id="reset-workout-btn" aria-label="אפס אימון">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+        אפס אימון
+      </button>
+
+      <!-- Exercise List -->
+      <ol class="exercise-list" id="exercise-list" aria-label="רשימת תרגילים"></ol>
+
+    </div>
+  </main>
+
+  <!-- Rest Timer Widget -->
+  <aside class="timer-widget" id="timer-widget" aria-label="טיימר מנוחה" aria-hidden="true">
+    <div class="timer-drag-handle" id="timer-drag-handle" aria-hidden="true"></div>
+
+    <div class="timer-top">
+      <span class="timer-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        מנוחה
+      </span>
+      <button class="timer-close-btn" id="timer-close-btn" aria-label="סגור טיימר">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="timer-exercise-name" id="timer-exercise-name"></div>
+
+    <!-- Ring -->
+    <div class="timer-ring-wrap">
+      <svg class="timer-ring-svg" viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="ring-track" cx="60" cy="60" r="50"/>
+        <circle class="ring-progress" id="ring-progress" cx="60" cy="60" r="50"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-time" id="timer-time">1:30</div>
+        <div class="timer-status" id="timer-status">מוכן</div>
+      </div>
+    </div>
+
+    <!-- Presets -->
+    <div class="timer-presets" role="group" aria-label="זמני מנוחה מוגדרים מראש">
+      <button class="preset-btn" data-s="30" aria-label="30 שניות">30s</button>
+      <button class="preset-btn" data-s="60" aria-label="דקה">1m</button>
+      <button class="preset-btn preset-active" data-s="90" aria-label="דקה וחצי">1:30</button>
+      <button class="preset-btn" data-s="120" aria-label="שתי דקות">2m</button>
+      <button class="preset-btn" data-s="180" aria-label="שלוש דקות">3m</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="timer-controls">
+      <button class="ctrl-btn ctrl-reset" id="ctrl-reset" aria-label="אפס טיימר">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn ctrl-play" id="ctrl-play" aria-label="התחל">
+        <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <svg class="icon-pause" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" style="display:none">
+          <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+        </svg>
+      </button>
+      <button class="ctrl-btn ctrl-plus" id="ctrl-plus" aria-label="הוסף 30 שניות">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Timer Backdrop (mobile) -->
+  <div class="timer-backdrop" id="timer-backdrop" aria-hidden="true"></div>
+
+  <!-- FAB: open timer -->
+  <button class="timer-fab" id="timer-fab" aria-label="פתח טיימר מנוחה">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+  </button>
+
+  <script src="app.js"></script>
+</body>
+</html>
