@@ -10,17 +10,17 @@ const WORKOUTS = {
     subtitle: 'PUSH · רגליים · בטן',
     warmup: 'סקוואטים במשקל גוף (ירידה מבוקרת, גב ישר, ברכיים החוצה) · סיבובי כתפיים + פוש אפים קלים',
     exercises: [
-      { id: 'w1e1',  name: 'בנץ פרס',                          zone: 'PUSH',       volume: '3 × 12',         rpe: '7-8', rest: 150 },
-      { id: 'w1e2',  name: 'שכיבות שמיכה',                     zone: 'PUSH',       volume: '3 × 10-12',      rpe: '7-8', rest: 90  },
-      { id: 'w1e3',  name: 'לחיצת כתפיים דאמבלים בישיבה',      zone: 'PUSH',       volume: '3 × 12',         rpe: '6-7', rest: 90  },
-      { id: 'w1e4',  name: 'הרחקת כתף',                        zone: 'PUSH',       volume: '3 × 10',         rpe: '6-7', rest: 90  },
-      { id: 'w1e5',  name: 'כפיפת כתף קדמי',                   zone: 'PUSH',       volume: '3 × 8',          rpe: '7-8', rest: 90,  bonus: true },
-      { id: 'w1e6',  name: 'פשיטת מרפק מעל הראש בכבל',         zone: 'יד אחורית',  volume: '3 × 12',         rpe: '7-8', rest: 90  },
-      { id: 'w1e7',  name: 'מקבילים בגרביטון',                  zone: 'יד אחורית',  volume: '3 × 12',         rpe: '7-8', rest: 150 },
-      { id: 'w1e8',  name: 'סקווט חופשי',                      zone: 'רגליים',     volume: '3 × 12',         rpe: '8-9', rest: 150 },
-      { id: 'w1e9',  name: 'Hack Squat',                        zone: 'רגליים',     volume: '3 × 8',          rpe: '8-9', rest: 150, bonus: true },
-      { id: 'w1e10', name: 'הרמות רגליים בשכיבה',              zone: 'בטן',        volume: '2 × 30 שניות',   rpe: '7-8', rest: 30  },
-      { id: 'w1e11', name: 'אופניים',                           zone: 'בטן',        volume: '2 × 30 שניות',   rpe: '6-7', rest: 30  },
+      { id: 'w1e1',  name: 'בנץ פרס',                          zone: 'PUSH',       volume: '3 × 12',         rpe: '7-8', rest: 150, link: 'https://www.youtube.com/watch?v=vcBig73ojpE' },
+      { id: 'w1e2',  name: 'שכיבות שמיכה',                     zone: 'PUSH',       volume: '3 × 10-12',      rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/watch?v=0pkjOk0EiAk' },
+      { id: 'w1e3',  name: 'לחיצת כתפיים דאמבלים בישיבה',      zone: 'PUSH',       volume: '3 × 12',         rpe: '6-7', rest: 90,  link: 'https://youtube.com/shorts/kzKsy-TtddE' },
+      { id: 'w1e4',  name: 'הרחקת כתף',                        zone: 'PUSH',       volume: '3 × 10',         rpe: '6-7', rest: 90,  link: 'https://www.youtube.com/watch?v=kDqklk1ZESo' },
+      { id: 'w1e5',  name: 'כפיפת כתף קדמי',                   zone: 'PUSH',       volume: '3 × 8',          rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/watch?v=CH9JzDStL3U', bonus: true },
+      { id: 'w1e6',  name: 'פשיטת מרפק מעל הראש בכבל',         zone: 'יד אחורית',  volume: '3 × 12',         rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/shorts/9Ark9S11uXw' },
+      { id: 'w1e7',  name: 'מקבילים בגרביטון',                  zone: 'יד אחורית',  volume: '3 × 12',         rpe: '7-8', rest: 150, link: 'https://www.youtube.com/shorts/eicOUO9WaJc' },
+      { id: 'w1e8',  name: 'סקווט חופשי',                      zone: 'רגליים',     volume: '3 × 12',         rpe: '8-9', rest: 150, link: 'https://www.youtube.com/shorts/GZrM4zgsdb8' },
+      { id: 'w1e9',  name: 'Hack Squat',                        zone: 'רגליים',     volume: '3 × 8',          rpe: '8-9', rest: 150, link: 'https://www.youtube.com/watch?v=rYgNArpwE7E', bonus: true },
+      { id: 'w1e10', name: 'הרמות רגליים בשכיבה',              zone: 'בטן',        volume: '2 × 30 שניות',   rpe: '7-8', rest: 30,  link: 'https://youtu.be/l4kQd9eWclE' },
+      { id: 'w1e11', name: 'אופניים',                           zone: 'בטן',        volume: '2 × 30 שניות',   rpe: '6-7', rest: 30,  link: 'https://youtube.com/shorts/NWzlS1Lp1e8' },
     ]
   },
   workout2: {
@@ -29,18 +29,18 @@ const WORKOUTS = {
     subtitle: 'PULL · ישבן · בטן',
     warmup: 'סקוואטים במשקל גוף (הפעלת רגליים וישבן) · משיכת שכמות בעמידה',
     exercises: [
-      { id: 'w2e1',  name: 'פולי עליון אחיזה צרה',              zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 150 },
-      { id: 'w2e2',  name: 'פולי עליון אחיזה רחבה',             zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 150 },
-      { id: 'w2e3',  name: 'חתירה בישיבה בכבל',                 zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 90  },
-      { id: 'w2e4',  name: 'Face Pulls',                         zone: 'PULL',   volume: '3 × 12',         rpe: '6-7', rest: 90  },
-      { id: 'w2e5',  name: 'פטישים',                             zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 90  },
-      { id: 'w2e6',  name: 'כיסא רומי',                         zone: 'PULL',   volume: '3 × 10',         rpe: '6-7', rest: 150, bonus: true },
-      { id: 'w2e7',  name: 'Hip Thrust',                         zone: 'ישבן',   volume: '3 × 10',         rpe: '8-9', rest: 150 },
-      { id: 'w2e8',  name: 'מכונת פישוק ירך',                   zone: 'ישבן',   volume: '3 × 12',         rpe: '7-8', rest: 90  },
-      { id: 'w2e9',  name: 'Single Leg Glute Bridge',            zone: 'ישבן',   volume: '3 × 10 כ"צ',     rpe: '7-8', rest: 150, bonus: true },
-      { id: 'w2e10', name: 'נגיעות עקבים',                      zone: 'בטן',    volume: '2 × דקה',        rpe: '7-8', rest: 60  },
-      { id: 'w2e11', name: 'בעיטות מספריים נמוכות',             zone: 'בטן',    volume: '2 × 30 שניות',   rpe: '7-8', rest: 30  },
-      { id: 'w2e12', name: 'אופניים',                            zone: 'בטן',    volume: '2 × 30 שניות',   rpe: '6-7', rest: 30,  bonus: true },
+      { id: 'w2e1',  name: 'פולי עליון אחיזה צרה',              zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 150, link: 'https://www.youtube.com/watch?v=IjoFCmLX7z0' },
+      { id: 'w2e2',  name: 'פולי עליון אחיזה רחבה',             zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 150, link: 'https://www.youtube.com/watch?v=7JnP8dFbS14' },
+      { id: 'w2e3',  name: 'חתירה בישיבה בכבל',                 zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/watch?v=lJoozxC0Rns' },
+      { id: 'w2e4',  name: 'Face Pulls',                         zone: 'PULL',   volume: '3 × 12',         rpe: '6-7', rest: 90,  link: 'https://www.youtube.com/shorts/I41wK3wTZlo' },
+      { id: 'w2e5',  name: 'פטישים',                             zone: 'PULL',   volume: '3 × 12',         rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/watch?v=P5sXHLmXmBM' },
+      { id: 'w2e6',  name: 'כיסא רומי',                         zone: 'PULL',   volume: '3 × 10',         rpe: '6-7', rest: 150, link: 'https://www.youtube.com/watch?v=ph3pddpKzzw', bonus: true },
+      { id: 'w2e7',  name: 'Hip Thrust',                         zone: 'ישבן',   volume: '3 × 10',         rpe: '8-9', rest: 150, link: 'https://www.youtube.com/shorts/m8g9VogoxMo' },
+      { id: 'w2e8',  name: 'מכונת פישוק ירך',                   zone: 'ישבן',   volume: '3 × 12',         rpe: '7-8', rest: 90,  link: 'https://www.youtube.com/watch?v=G_8LItOiZ0Q' },
+      { id: 'w2e9',  name: 'Single Leg Glute Bridge',            zone: 'ישבן',   volume: '3 × 10 כ"צ',     rpe: '7-8', rest: 150, link: 'https://www.youtube.com/watch?v=sVfp4LN9niA', bonus: true },
+      { id: 'w2e10', name: 'נגיעות עקבים',                      zone: 'בטן',    volume: '2 × דקה',        rpe: '7-8', rest: 60,  link: 'https://youtube.com/shorts/i-BBrCVNT9A' },
+      { id: 'w2e11', name: 'בעיטות מספריים נמוכות',             zone: 'בטן',    volume: '2 × 30 שניות',   rpe: '7-8', rest: 30,  link: 'https://youtube.com/shorts/2Hj5UzTzMGs' },
+      { id: 'w2e12', name: 'אופניים',                            zone: 'בטן',    volume: '2 × 30 שניות',   rpe: '6-7', rest: 30,  link: 'https://youtube.com/shorts/NWzlS1Lp1e8', bonus: true },
     ]
   }
 };
@@ -147,7 +147,15 @@ function renderWorkout(workoutId) {
         </svg>
       </button>
       <div class="exercise-body">
-        <div class="exercise-name">${ex.name}</div>
+        <div class="exercise-name-row">
+          <span class="exercise-name">${ex.name}</span>
+          ${ex.link ? `<a class="yt-link" href="${ex.link}" target="_blank" rel="noopener noreferrer" aria-label="צפה בסרטון הדגמה: ${ex.name}">
+            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+            הדגמה
+          </a>` : ''}
+        </div>
         <div class="exercise-meta">
           <span class="zone-badge" style="color:${zs.color};background:${zs.bg};border:1px solid ${zs.border}">${ex.zone}</span>
           <span class="volume-tag">${ex.volume}</span>

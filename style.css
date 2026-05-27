@@ -482,6 +482,14 @@ button {
 /* Card body */
 .exercise-body { flex: 1; min-width: 0; }
 
+.exercise-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+  flex-wrap: wrap;
+}
+
 .exercise-name {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 1.1rem;
@@ -489,13 +497,42 @@ button {
   letter-spacing: .01em;
   color: var(--text);
   line-height: 1.25;
-  margin-bottom: 7px;
   transition: color var(--dur) var(--ease);
 }
 
 .exercise-card.done .exercise-name {
   text-decoration: line-through;
   color: var(--text-muted);
+}
+
+.yt-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: #CC0000;
+  background: #FFF0F0;
+  border: 1px solid #FECACA;
+  padding: 2px 7px 2px 6px;
+  border-radius: 5px;
+  text-decoration: none;
+  transition: var(--dur) var(--ease);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.yt-link:hover {
+  background: #FFE4E4;
+  border-color: #FCA5A5;
+  color: #991B1B;
+  box-shadow: 0 1px 4px rgba(220,38,38,.15);
+}
+
+.yt-link:focus-visible {
+  outline: 2px solid #EF4444;
+  outline-offset: 2px;
 }
 
 .exercise-meta {
