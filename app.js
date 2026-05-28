@@ -62,11 +62,14 @@ const ZONE_STYLES = {
 const state = {
   activeWorkout: 'workout1',
   checked: {},       // { [exerciseId]: boolean }
+  resetArmed: false,
+  resetTimeout: null,
   timer: {
     total: 90,
     remaining: 90,
     running: false,
     interval: null,
+    startTimeout: null,
     exerciseName: '',
   }
 };
@@ -87,7 +90,24 @@ function loadChecked(workoutId) {
 }
 
 function saveChecked(workoutId) {
-  localStorage.setItem(todayKey(workoutId), JSON.stringify(state.checked));
+  try {
+    localStorage.setItem(todayKey(workoutId), JSON.stringify(state.checked));
+  } catch(_) {}
+}
+
+function loadActiveWorkout() {
+  try {
+    const saved = localStorage.getItem('wt_active_workout');
+    return WORKOUTS[saved] ? saved : 'workout1';
+  } catch {
+    return 'workout1';
+  }
+}
+
+function saveActiveWorkout(workoutId) {
+  try {
+    localStorage.setItem('wt_active_workout', workoutId);
+  } catch(_) {}
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -109,6 +129,9 @@ function renderWorkout(workoutId) {
   state.activeWorkout = workoutId;
   state.checked = loadChecked(workoutId);
 
+  document.getElementById('session-label').textContent = workout.name;
+  document.getElementById('session-title').textContent = workout.subtitle;
+
   // Warmup
   document.getElementById('warmup-text').textContent = workout.warmup;
 
@@ -124,16 +147,13 @@ function renderWorkout(workoutId) {
     const li = document.createElement('li');
     li.className = `exercise-card${isDone ? ' done' : ''}${ex.bonus ? ' bonus' : ''}`;
     li.style.setProperty('--zone-color', zs.color);
+    li.style.setProperty('--zone-bg', zs.bg);
+    li.style.setProperty('--zone-border', zs.border);
+    li.style.setProperty('--row-delay', `${Math.min(idx, 12) * 26}ms`);
     li.dataset.id = ex.id;
 
     const bonusBadge = ex.bonus
-      ? `<span class="bonus-badge" aria-label="תרגיל אופציונלי">
-           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-           </svg>
-           בונוס
-         </span>`
+      ? '<span class="bonus-badge" aria-label="תרגיל אופציונלי">בונוס</span>'
       : '';
 
     li.innerHTML = `
@@ -141,6 +161,7 @@ function renderWorkout(workoutId) {
               data-id="${ex.id}"
               aria-label="${isDone ? 'בטל סימון' : 'סמן כהושלם'}: ${ex.name}"
               aria-pressed="${isDone}">
+        <span class="check-number" aria-hidden="true">${String(idx + 1).padStart(2, '0')}</span>
         <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none"
              stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <polyline points="20 6 9 17 4 12"/>
@@ -148,28 +169,30 @@ function renderWorkout(workoutId) {
       </button>
       <div class="exercise-body">
         <div class="exercise-name-row">
+          <span class="zone-badge">${ex.zone}</span>
           <span class="exercise-name">${ex.name}</span>
-          ${ex.link ? `<a class="yt-link" href="${ex.link}" target="_blank" rel="noopener noreferrer" aria-label="צפה בסרטון הדגמה: ${ex.name}">
-            <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            הדגמה
-          </a>` : ''}
         </div>
         <div class="exercise-meta">
-          <span class="zone-badge" style="color:${zs.color};background:${zs.bg};border:1px solid ${zs.border}">${ex.zone}</span>
           <span class="volume-tag">${ex.volume}</span>
           <span class="rpe-tag">RPE ${ex.rpe}</span>
           ${bonusBadge}
         </div>
       </div>
-      <button class="rest-btn" data-rest="${ex.rest}" data-name="${ex.name}" aria-label="הפעל טיימר מנוחה ${restLabel}">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
-        ${restLabel}
-      </button>
+      <div class="exercise-actions">
+        ${ex.link ? `<a class="yt-link" href="${ex.link}" target="_blank" rel="noopener noreferrer" aria-label="צפה בסרטון הדגמה: ${ex.name}">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4L15.8 12l-6.2 3.6z"/>
+          </svg>
+          וידאו
+        </a>` : ''}
+        <button class="rest-btn" data-rest="${ex.rest}" data-name="${ex.name}" aria-label="הפעל טיימר מנוחה ${restLabel}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          ${restLabel}
+        </button>
+      </div>
     `;
     list.appendChild(li);
   });
@@ -198,12 +221,15 @@ function updateProgress() {
 
   document.getElementById('progress-fraction').textContent = `${done} / ${total}`;
   document.getElementById('progress-pct').textContent = `${pct}%`;
+  document.getElementById('completed-count').textContent = done;
+  document.getElementById('required-count').textContent = total;
 
   const fill = document.getElementById('progress-fill');
   fill.style.width = `${pct}%`;
 
   const bar = document.getElementById('progress-bar-container');
   bar.setAttribute('aria-valuenow', pct);
+  bar.setAttribute('aria-valuetext', `${done} מתוך ${total} תרגילי חובה בוצעו`);
 
   if (pct === 100 && done > 0) {
     showCompletion();
@@ -220,9 +246,9 @@ function showCompletion() {
   banner.setAttribute('role', 'status');
   banner.setAttribute('aria-live', 'polite');
   banner.innerHTML = `
-    <div class="completion-emoji" aria-hidden="true">💪</div>
-    <div class="completion-title">אימון הושלם!</div>
-    <div class="completion-sub">כל הכבוד דולב – כיבשת אותו היום!</div>
+    <div class="completion-mark" aria-hidden="true">100%</div>
+    <div class="completion-title">אימון הושלם</div>
+    <div class="completion-sub">כל תרגילי החובה סומנו להיום.</div>
   `;
 
   const list = document.getElementById('exercise-list');
@@ -273,6 +299,13 @@ function attachExerciseEvents() {
 ═══════════════════════════════════════════════════════════ */
 const CIRCUMFERENCE = 2 * Math.PI * 50; // r=50 → ≈314.16
 
+function clearTimerStartTimeout() {
+  if (state.timer.startTimeout) {
+    clearTimeout(state.timer.startTimeout);
+    state.timer.startTimeout = null;
+  }
+}
+
 function formatTime(s) {
   const m = Math.floor(s / 60);
   const sec = s % 60;
@@ -280,6 +313,7 @@ function formatTime(s) {
 }
 
 function setTimerDuration(seconds) {
+  clearTimerStartTimeout();
   timerStop();
   state.timer.total     = seconds;
   state.timer.remaining = seconds;
@@ -307,13 +341,15 @@ function updateRingProgress() {
 }
 
 function timerTick() {
-  if (state.timer.remaining <= 0) {
+  state.timer.remaining = Math.max(0, state.timer.remaining - 1);
+  updateTimerDisplay();
+  updateRingProgress();
+
+  if (state.timer.remaining === 0) {
     timerFinish();
     return;
   }
-  state.timer.remaining--;
-  updateTimerDisplay();
-  updateRingProgress();
+
   document.getElementById('timer-status').textContent = 'רץ...';
 }
 
@@ -336,6 +372,7 @@ function timerStart() {
 
 function timerPause() {
   clearInterval(state.timer.interval);
+  state.timer.interval = null;
   state.timer.running = false;
 
   const playBtn = document.getElementById('ctrl-play');
@@ -348,6 +385,7 @@ function timerPause() {
 
 function timerStop() {
   clearInterval(state.timer.interval);
+  state.timer.interval = null;
   state.timer.running = false;
   const playBtn = document.getElementById('ctrl-play');
   playBtn.querySelector('.icon-play').style.display  = '';
@@ -379,7 +417,8 @@ function timerFinish() {
   playBeep();
 }
 
-function openTimer(seconds, exerciseName) {
+function openTimer(seconds, exerciseName, options = {}) {
+  const { autoStart = true } = options;
   setTimerDuration(seconds);
   document.getElementById('timer-exercise-name').textContent = exerciseName || '';
   state.timer.exerciseName = exerciseName || '';
@@ -390,12 +429,19 @@ function openTimer(seconds, exerciseName) {
   widget.setAttribute('aria-hidden', 'false');
   backdrop.classList.add('visible');
   document.getElementById('timer-fab').classList.add('hidden');
+  document.body.classList.add('timer-open');
 
-  // Auto-start
-  setTimeout(timerStart, 300);
+  if (autoStart) {
+    clearTimerStartTimeout();
+    state.timer.startTimeout = setTimeout(() => {
+      state.timer.startTimeout = null;
+      timerStart();
+    }, 250);
+  }
 }
 
 function closeTimer() {
+  clearTimerStartTimeout();
   timerPause();
   const widget   = document.getElementById('timer-widget');
   const backdrop = document.getElementById('timer-backdrop');
@@ -403,6 +449,7 @@ function closeTimer() {
   widget.setAttribute('aria-hidden', 'true');
   backdrop.classList.remove('visible');
   document.getElementById('timer-fab').classList.remove('hidden');
+  document.body.classList.remove('timer-open');
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -492,10 +539,9 @@ function initTabs() {
       const id = tab.dataset.workout;
       if (id === state.activeWorkout) return;
 
-      document.querySelectorAll('.tab').forEach(t => {
-        t.classList.toggle('active', t.dataset.workout === id);
-        t.setAttribute('aria-selected', t.dataset.workout === id);
-      });
+      setActiveTab(id);
+      saveActiveWorkout(id);
+      disarmReset();
 
       // Remove completion banner from previous workout
       const banner = document.getElementById('completion-banner');
@@ -503,6 +549,14 @@ function initTabs() {
 
       renderWorkout(id);
     });
+  });
+}
+
+function setActiveTab(workoutId) {
+  document.querySelectorAll('.tab').forEach(t => {
+    const active = t.dataset.workout === workoutId;
+    t.classList.toggle('active', active);
+    t.setAttribute('aria-selected', active);
   });
 }
 
@@ -540,7 +594,7 @@ function initTimer() {
 
   // FAB
   document.getElementById('timer-fab').addEventListener('click', () => {
-    openTimer(state.timer.total, state.timer.exerciseName);
+    openTimer(state.timer.total, state.timer.exerciseName, { autoStart: false });
   });
 
   // Init ring
@@ -551,13 +605,38 @@ function initTimer() {
 /* ═══════════════════════════════════════════════════════════
    Reset workout
 ═══════════════════════════════════════════════════════════ */
-document.getElementById('reset-workout-btn').addEventListener('click', () => {
-  if (!confirm('לאפס את האימון הנוכחי?')) return;
+const resetWorkoutBtn = document.getElementById('reset-workout-btn');
+const resetWorkoutLabel = document.getElementById('reset-workout-label');
+
+function disarmReset() {
+  state.resetArmed = false;
+  resetWorkoutBtn.classList.remove('armed');
+  resetWorkoutLabel.textContent = 'אפס אימון';
+  if (state.resetTimeout) {
+    clearTimeout(state.resetTimeout);
+    state.resetTimeout = null;
+  }
+}
+
+function resetCurrentWorkout() {
   state.checked = {};
   saveChecked(state.activeWorkout);
   const banner = document.getElementById('completion-banner');
   if (banner) banner.remove();
   renderWorkout(state.activeWorkout);
+}
+
+resetWorkoutBtn.addEventListener('click', () => {
+  if (!state.resetArmed) {
+    state.resetArmed = true;
+    resetWorkoutBtn.classList.add('armed');
+    resetWorkoutLabel.textContent = 'לחץ שוב לאיפוס';
+    state.resetTimeout = setTimeout(disarmReset, 2600);
+    return;
+  }
+
+  resetCurrentWorkout();
+  disarmReset();
 });
 
 /* ═══════════════════════════════════════════════════════════
@@ -577,8 +656,10 @@ document.addEventListener('keydown', e => {
    Init
 ═══════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  const initialWorkout = loadActiveWorkout();
   renderDate();
   initTabs();
   initTimer();
-  renderWorkout('workout1');
+  setActiveTab(initialWorkout);
+  renderWorkout(initialWorkout);
 });
